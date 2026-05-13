@@ -1,23 +1,27 @@
-pipeline{
-  agent any{
-    environment{
-      DOCKER_IMAGE="ashwini2006/my-python-app"
-      DOCKER_TAG="latest"
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = "ashwini2006/my-python-app"
+        DOCKER_TAG = "latest"
     }
-    stages{
-      stage('build docker image'){
-        steps{
-          sh 'docker build -t $DOCKER_IMAGE:$DOCKER_TAG .'
+
+    stages {
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t $DOCKER_IMAGE:$DOCKER_TAG .'
+            }
         }
-      }
-      stage('login to docker hub'){
-        steps{
-          withCredentials([usernamePassword(
-            credentialsId:'dockerhub-credentials',
-            usernameVariable:'USER',
-            passwordVariable:'PASS')])
-          {
-            sh 'echo $PASS | docker login -u $USER --password-stdin'
+
+        stage('Login to DockerHub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'USER',
+                    passwordVariable: 'PASS'
+                )]) {
+                    sh 'echo $PASS | docker login -u $USER --password-stdin'
                 }
             }
         }
@@ -39,4 +43,3 @@ pipeline{
         }
     }
 }
-        
